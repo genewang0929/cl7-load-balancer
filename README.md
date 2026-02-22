@@ -72,6 +72,3 @@ The current implementation uses **Active Health Checks** via TCP Dialing. While 
 * [ ] Add Prometheus metrics for monitoring request rates and latency.
 * [ ] Support Dynamic Configuration reloading (hot-swapping backends without restart).
 
----
-
-Would you like me to help you write the **Unit Tests** for the `GetNextPeer` logic next?
