@@ -11,6 +11,7 @@ A high-performance Layer 7 Load Balancer implemented in Go, featuring active hea
 * **Thread-Safe State Management**: Uses `sync.RWMutex` to allow high-frequency reads of backend status while ensuring safe periodic updates.
 * **Graceful Shutdown**: Listens for system interrupts to clean up resources and stop background workers without dropping active connections.
 * **Containerized Deployment**: Includes `Dockerfile` and `docker-compose` for rapid local orchestration.
+* **Real-time Observability**: Tracks request distribution per backend using atomic counters, exposed via structured health check logs.
 
 ## 🛠 Architecture
 
