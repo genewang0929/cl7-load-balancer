@@ -5,12 +5,14 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"sync"
+	"sync/atomic"
 )
 
 type Backend struct {
 	URL          *url.URL
 	ReverseProxy *httputil.ReverseProxy
 	Alive        bool
+	Requests     uint64 // 新增：紀錄處理過的請求總數
 	mux          sync.RWMutex
 }
 
@@ -24,6 +26,11 @@ func (b *Backend) IsAlive() bool {
 	b.mux.RLock()
 	defer b.mux.RUnlock()
 	return b.Alive
+}
+
+// 新增：安全地獲取當前請求數
+func (b *Backend) GetRequests() uint64 {
+	return atomic.LoadUint64(&b.Requests)
 }
 
 type ServerPool struct {

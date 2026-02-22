@@ -16,17 +16,21 @@ func RunHealthCheck(ctx context.Context, s *pool.ServerPool, interval time.Durat
 	for {
 		select {
 		case <-ticker.C:
+			log.Println("--- Health Check Report ---")
 			for _, b := range s.Backends {
 				alive := isAlive(b.URL.Host)
 				b.SetAlive(alive)
+
 				status := "up"
 				if !alive {
 					status = "down"
 				}
-				log.Printf("Health check: %s is %s", b.URL, status)
+
+				// 修改：輸出日誌時同時顯示該節點處理的請求數
+				log.Printf("[%s] Status: %s, Total Requests: %d", b.URL, status, b.GetRequests())
 			}
+			log.Println("---------------------------")
 		case <-ctx.Done():
-			log.Println("Health check worker shutting down...")
 			return
 		}
 	}

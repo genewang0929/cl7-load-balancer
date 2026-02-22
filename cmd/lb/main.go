@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -32,6 +33,9 @@ func main() {
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			peer := serverPool.GetNextPeer()
 			if peer != nil {
+				// 新增：使用原子操作增加計數，確保併發安全
+				atomic.AddUint64(&peer.Requests, 1)
+
 				peer.ReverseProxy.ServeHTTP(w, r)
 				return
 			}
