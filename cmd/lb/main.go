@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync/atomic"
 	"syscall"
 	"time"
@@ -16,8 +17,25 @@ import (
 
 func main() {
 	serverPool := &pool.ServerPool{}
-	// 這裡示範手動加入，實務上可從 config.yaml 讀取
-	backends := []string{"http://localhost:8081", "http://localhost:8082"}
+
+	// 從環境變數讀取後端列表，多個 URL 用逗號隔開
+	// 例如：BACKENDS=http://backend1:8081,http://backend2:8082
+	rawBackends := os.Getenv("BACKENDS")
+	var backends []string
+
+	if rawBackends != "" {
+		// 如果有環境變數（Docker 環境）
+		backends = strings.Split(rawBackends, ",")
+		log.Printf("Loading backends from environment: %v", backends)
+	} else {
+		// 如果沒有環境變數（Local 開發環境），則使用預設的 localhost
+		backends = []string{
+			"http://localhost:8081",
+			"http://localhost:8082",
+		}
+		log.Printf("No BACKENDS env found, using default: %v", backends)
+	}
+
 	for _, b := range backends {
 		serverPool.AddBackend(b)
 	}

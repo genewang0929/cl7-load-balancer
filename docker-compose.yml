@@ -4,6 +4,8 @@ services:
     build: .
     ports:
       - "8080:8080"
+    environment:
+      - BACKENDS=http://backend1:8081,http://backend2:8082
     depends_on:
       - backend1
       - backend2
