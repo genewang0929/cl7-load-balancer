@@ -54,17 +54,37 @@ go run cmd/lb/main.go
 
 ```
 
+---
 
+## 🧪 Testing & Benchmarking
 
-## 🧪 Technical Deep Dive
+The project includes a comprehensive suite of unit tests and benchmarks to ensure the reliability of the load-balancing algorithm and its performance under concurrent load.
 
-### Why Mutex over Channels for State?
+### Running Unit Tests
 
-In this project, the "Alive" status of a backend is a state frequently read by the proxy logic but rarely updated by the health checker. Using `sync.RWMutex` provides better performance than channels for this "broadcast" style state sharing, as it allows multiple readers to access the status simultaneously without blocking.
+To verify the Round-Robin logic, health-check state transitions, and edge cases (e.g., all backends down), run:
 
-### Health Check Strategy
+```bash
+go test ./internal/pool/... -v
 
-The current implementation uses **Active Health Checks** via TCP Dialing. While HTTP-based checks can verify application logic, TCP checks provide a lightweight way to ensure the process and network stack are responsive with minimal overhead.
+```
+
+### Running Benchmarks
+
+To evaluate the performance of the `GetNextPeer` method and its mutex contention under high concurrency, run:
+
+```bash
+go test -bench=. ./internal/pool/...
+
+```
+
+### Test Coverage includes:
+
+* **Round-Robin Accuracy**: Ensures requests rotate correctly among available backends.
+* **Failover Logic**: Confirms that dead servers are skipped and the next healthy peer is selected.
+* **Boundary Conditions**: Handles scenarios where no backends are alive without crashing.
+* **Concurrency Stress**: Validates thread-safety when multiple goroutines access the `ServerPool` simultaneously.
+
 
 ## 📈 Future Roadmap
 
