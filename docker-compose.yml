@@ -1,0 +1,21 @@
+version: "3"
+services:
+  lb:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend1
+      - backend2
+
+  backend1:
+    image: golang:1.21-alpine
+    command: sh -c "go run /app/cmd/backend/main.go 8081"
+    volumes:
+      - .:/app
+
+  backend2:
+    image: golang:1.21-alpine
+    command: sh -c "go run /app/cmd/backend/main.go 8082"
+    volumes:
+      - .:/app
