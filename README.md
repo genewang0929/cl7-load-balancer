@@ -54,7 +54,6 @@ go run cmd/lb/main.go
 
 ```
 
----
 
 ## 🧪 Testing & Benchmarking
 
